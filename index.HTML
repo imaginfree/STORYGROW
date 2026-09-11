@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이야기 약방 — 지은이 그루</title>
+<meta name="description" content="마음에 맞는 이야기를 한 첩씩 지어 드리는 곳. 지은이 그루.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --wood:        #4a3527;
+    --wood-edge:   #654a36;
+    --wood-deep:   #2f2119;
+    --paper:       #efe9da;
+    --paper-deep:  #e2d9c4;
+    --ink:         #2b2721;
+    --ink-soft:    #6f6455;
+    --indigo:      #274a5c;
+    --cinnabar:    #a83a2c;
+    --brass:       #a9834b;
+
+    --serif: "Gowun Batang", serif;
+    --sans:  "Gowun Dodum", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    padding: 0 1.25rem 5rem;
+    background:
+      repeating-linear-gradient(90deg,
+        rgba(0,0,0,.05) 0 2px, rgba(255,255,255,.02) 2px 5px),
+      linear-gradient(180deg, #3a2a1f 0%, #241811 100%);
+    background-attachment: fixed;
+    color: var(--paper);
+    font-family: var(--sans);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 54rem; margin: 0 auto; }
+
+  /* ── 간판 ───────────────────────────────── */
+  .signboard {
+    margin: 0 auto;
+    padding: 3.5rem 1rem 3rem;
+    text-align: center;
+  }
+
+  .signboard::after {
+    content: "";
+    display: block;
+    width: 3.5rem;
+    height: 1px;
+    margin: 2.25rem auto 0;
+    background: var(--brass);
+    opacity: .6;
+  }
+
+  .shop-name {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(2.75rem, 11vw, 4.5rem);
+    letter-spacing: .12em;
+    line-height: 1.2;
+    margin: 0;
+    text-indent: .12em;
+  }
+
+  .shop-line {
+    font-family: var(--serif);
+    font-size: 1.0625rem;
+    color: #c9bda6;
+    margin: 1.5rem auto 0;
+    max-width: 26rem;
+  }
+
+  .maker {
+    display: inline-flex;
+    align-items: center;
+    gap: .625rem;
+    margin-top: 1.75rem;
+    font-size: .9375rem;
+    color: #b8a98e;
+  }
+
+  .seal {
+    display: inline-grid;
+    place-items: center;
+    width: 2.375rem;
+    height: 2.375rem;
+    border: 2px solid var(--cinnabar);
+    border-radius: 3px;
+    color: var(--cinnabar);
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: .875rem;
+    letter-spacing: .04em;
+    line-height: 1;
+    transform: rotate(-4deg);
+  }
+
+  /* ── 약장 ───────────────────────────────── */
+  .pharmacy input { position: absolute; opacity: 0; pointer-events: none; }
+
+  .guide {
+    font-size: .875rem;
+    color: #a9997f;
+    text-align: center;
+    margin: 0 0 1rem;
+  }
+
+  .chest {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 14px;
+    background: linear-gradient(180deg, var(--wood-edge), var(--wood));
+    border: 1px solid #7a5c44;
+    border-radius: 4px;
+    box-shadow:
+      inset 0 2px 0 rgba(255,255,255,.09),
+      0 24px 48px -20px rgba(0,0,0,.8);
+  }
+
+  /* 위·아래 칸을 나누는 가로 칸막이 */
+  .rail {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: .25rem 0;
+    padding: .5rem;
+    background: linear-gradient(180deg, var(--wood-deep), #241a13);
+    border-radius: 2px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.07);
+  }
+
+  .rail span {
+    font-family: var(--serif);
+    font-size: .875rem;
+    letter-spacing: .22em;
+    color: #cba871;
+    text-indent: .22em;
+  }
+
+  .drawer {
+    display: block;
+    position: relative;
+    padding: 1.375rem 1.125rem 1.5rem;
+    background: linear-gradient(180deg, var(--paper) 0%, var(--paper-deep) 100%);
+    border-radius: 2px;
+    color: var(--ink);
+    cursor: pointer;
+    text-align: center;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 3px 6px rgba(0,0,0,.45);
+    transition: transform .28s ease, box-shadow .28s ease;
+  }
+
+  .drawer:hover { transform: translateY(2px); }
+
+  .drawer-label {
+    font-family: var(--serif);
+    font-size: 1.1875rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    display: block;
+  }
+
+  .drawer-sub {
+    display: block;
+    margin-top: .375rem;
+    font-size: .8125rem;
+    color: var(--ink-soft);
+  }
+
+  .handle {
+    position: absolute;
+    left: 50%;
+    bottom: .5rem;
+    transform: translateX(-50%);
+    width: 2.25rem;
+    height: .3125rem;
+    border-radius: 99px;
+    background: linear-gradient(180deg, #c9a469, var(--brass));
+    box-shadow: 0 1px 1px rgba(0,0,0,.35);
+  }
+
+  /* 열린 서랍 — 앞으로 빠져나온 모습 */
+  #rx1:checked  ~ .chest label[for="rx1"],
+  #rx2:checked  ~ .chest label[for="rx2"],
+  #rx3:checked  ~ .chest label[for="rx3"],
+  #rx4:checked  ~ .chest label[for="rx4"],
+  #rx5:checked  ~ .chest label[for="rx5"],
+  #rx6:checked  ~ .chest label[for="rx6"],
+  #rx7:checked  ~ .chest label[for="rx7"],
+  #rx8:checked  ~ .chest label[for="rx8"],
+  #rx9:checked  ~ .chest label[for="rx9"],
+  #rx10:checked ~ .chest label[for="rx10"],
+  #rx11:checked ~ .chest label[for="rx11"],
+  #rx12:checked ~ .chest label[for="rx12"],
+  #rx13:checked ~ .chest label[for="rx13"],
+  #rx14:checked ~ .chest label[for="rx14"],
+  #rx15:checked ~ .chest label[for="rx15"],
+  #rx16:checked ~ .chest label[for="rx16"],
+  #rx17:checked ~ .chest label[for="rx17"],
+  #rx18:checked ~ .chest label[for="rx18"] {
+    transform: translateY(10px);
+    box-shadow: 0 14px 22px -6px rgba(0,0,0,.65);
+  }
+
+  #rx1:focus-visible  ~ .chest label[for="rx1"],
+  #rx2:focus-visible  ~ .chest label[for="rx2"],
+  #rx3:focus-visible  ~ .chest label[for="rx3"],
+  #rx4:focus-visible  ~ .chest label[for="rx4"],
+  #rx5:focus-visible  ~ .chest label[for="rx5"],
+  #rx6:focus-visible  ~ .chest label[for="rx6"],
+  #rx7:focus-visible  ~ .chest label[for="rx7"],
+  #rx8:focus-visible  ~ .chest label[for="rx8"],
+  #rx9:focus-visible  ~ .chest label[for="rx9"],
+  #rx10:focus-visible ~ .chest label[for="rx10"],
+  #rx11:focus-visible ~ .chest label[for="rx11"],
+  #rx12:focus-visible ~ .chest label[for="rx12"],
+  #rx13:focus-visible ~ .chest label[for="rx13"],
+  #rx14:focus-visible ~ .chest label[for="rx14"],
+  #rx15:focus-visible ~ .chest label[for="rx15"],
+  #rx16:focus-visible ~ .chest label[for="rx16"],
+  #rx17:focus-visible ~ .chest label[for="rx17"],
+  #rx18:focus-visible ~ .chest label[for="rx18"] {
+    outline: 3px solid var(--brass);
+    outline-offset: 3px;
+  }
+
+  /* ── 처방전 ─────────────────────────────── */
+  .counter { margin-top: 2.25rem; }
+
+  .slip {
+    display: none;
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 3px;
+    padding: 2rem 1.75rem 2.25rem;
+    border-top: 6px double var(--indigo);
+    box-shadow: 0 20px 40px -22px rgba(0,0,0,.85);
+  }
+
+  #rx1:checked  ~ .counter #slip1,
+  #rx2:checked  ~ .counter #slip2,
+  #rx3:checked  ~ .counter #slip3,
+  #rx4:checked  ~ .counter #slip4,
+  #rx5:checked  ~ .counter #slip5,
+  #rx6:checked  ~ .counter #slip6,
+  #rx7:checked  ~ .counter #slip7,
+  #rx8:checked  ~ .counter #slip8,
+  #rx9:checked  ~ .counter #slip9,
+  #rx10:checked ~ .counter #slip10,
+  #rx11:checked ~ .counter #slip11,
+  #rx12:checked ~ .counter #slip12,
+  #rx13:checked ~ .counter #slip13,
+  #rx14:checked ~ .counter #slip14,
+  #rx15:checked ~ .counter #slip15,
+  #rx16:checked ~ .counter #slip16,
+  #rx17:checked ~ .counter #slip17,
+  #rx18:checked ~ .counter #slip18 { display: block; }
+
+  .slip-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: .75rem;
+    padding-bottom: .875rem;
+    border-bottom: 1px solid rgba(43,39,33,.18);
+  }
+
+  .slip-head h2 {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    margin: 0;
+    letter-spacing: .02em;
+  }
+
+  .slip-for {
+    font-size: .8125rem;
+    color: var(--indigo);
+    border: 1px solid rgba(39,74,92,.35);
+    border-radius: 99px;
+    padding: .125rem .625rem;
+  }
+
+  .slip p {
+    font-family: var(--serif);
+    font-size: 1.0625rem;
+    line-height: 1.95;
+    margin: 1.25rem 0 0;
+    max-width: 40rem;
+  }
+
+  .tale-name { font-weight: 700; color: var(--ink); }
+
+  .also {
+    font-size: .9375rem;
+    color: var(--ink-soft);
+    line-height: 1.85;
+  }
+
+  .dose {
+    margin-top: 1.75rem;
+    padding-top: 1rem;
+    border-top: 1px dashed rgba(43,39,33,.3);
+    font-size: .875rem;
+    color: var(--ink-soft);
+    font-family: var(--sans);
+  }
+
+  .dose b { color: var(--indigo); font-weight: 700; }
+
+  .source {
+    margin-top: .875rem;
+    font-size: .8125rem;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    font-family: var(--sans);
+  }
+
+  .source a { color: var(--indigo); text-decoration-thickness: 1px; }
+  .source a:hover { color: var(--cinnabar); }
+
+  .empty {
+    text-align: center;
+    font-family: var(--serif);
+    color: #a9997f;
+    padding: 2.25rem 1rem;
+    border: 1px dashed rgba(233,224,205,.28);
+    border-radius: 3px;
+  }
+
+  .pharmacy:has(input:checked) .empty { display: none; }
+
+  /* ── 맺음 ───────────────────────────────── */
+  footer {
+    margin-top: 4rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid rgba(233,224,205,.15);
+    text-align: center;
+    font-size: .875rem;
+    color: #a9997f;
+  }
+
+  footer p { margin: .375rem 0; }
+
+  .credit {
+    max-width: 34rem;
+    margin: 1.5rem auto 0 !important;
+    font-size: .8125rem;
+    line-height: 1.8;
+    color: #8d7f69;
+  }
+
+  .credit a { color: #bfa678; }
+
+  @media (max-width: 640px) {
+    .chest { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 400px) {
+    .chest { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="signboard">
+    <h1 class="shop-name">이야기 약방</h1>
+    <p class="shop-line">아픈 데를 말씀해 주시면, 그 자리에 맞는 이야기를 한 첩 지어 드립니다.</p>
+    <p class="maker"><span class="seal" aria-hidden="true">그루</span> 지은이 그루</p>
+  </header>
+
+  <main class="pharmacy">
+    <p class="guide">서랍을 눌러 열고, 다시 누르면 닫힙니다</p>
+
+    <input type="radio" name="rx" id="rx1">
+    <input type="radio" name="rx" id="rx2">
+    <input type="radio" name="rx" id="rx3">
+    <input type="radio" name="rx" id="rx4">
+    <input type="radio" name="rx" id="rx5">
+    <input type="radio" name="rx" id="rx6">
+    <input type="radio" name="rx" id="rx7">
+    <input type="radio" name="rx" id="rx8">
+    <input type="radio" name="rx" id="rx9">
+    <input type="radio" name="rx" id="rx10">
+    <input type="radio" name="rx" id="rx11">
+    <input type="radio" name="rx" id="rx12">
+    <input type="radio" name="rx" id="rx13">
+    <input type="radio" name="rx" id="rx14">
+    <input type="radio" name="rx" id="rx15">
+    <input type="radio" name="rx" id="rx16">
+    <input type="radio" name="rx" id="rx17">
+    <input type="radio" name="rx" id="rx18">
+
+    <div class="chest">
+      <div>
+        <label class="drawer" for="rx1">
+          <span class="drawer-label">잠이 오지 않을 때</span>
+          <span class="drawer-sub">달 삶은 물</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div>
+        <label class="drawer" for="rx2">
+          <span class="drawer-label">마음이 시끄러울 때</span>
+          <span class="drawer-sub">고요 한 줌</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div>
+        <label class="drawer" for="rx3">
+          <span class="drawer-label">겁이 날 때</span>
+          <span class="drawer-sub">첫걸음 가루</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div>
+        <label class="drawer" for="rx4">
+          <span class="drawer-label">누군가 그리울 때</span>
+          <span class="drawer-sub">편지 세 통</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div>
+        <label class="drawer" for="rx5">
+          <span class="drawer-label">웃고 싶을 때</span>
+          <span class="drawer-sub">웃음 씨앗</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div>
+        <label class="drawer" for="rx6">
+          <span class="drawer-label">다시 시작할 때</span>
+          <span class="drawer-sub">새싹 한 뿌리</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+
+      <div class="rail"><span>옛 절 이야기</span></div>
+
+      <div>
+        <label class="drawer" for="rx7">
+          <span class="drawer-label">서울·경기·인천</span>
+          <span class="drawer-sub">전등사 · 용문사 · 신륵사 · 칠장사</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div>
+        <label class="drawer" for="rx8">
+          <span class="drawer-label">강원</span>
+          <span class="drawer-sub">정암사 · 신흥사 · 낙산사</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div>
+        <label class="drawer" for="rx9">
+          <span class="drawer-label">충청</span>
+          <span class="drawer-sub">관촉사 · 수덕사 · 법주사 · 갑사</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div>
+        <label class="drawer" for="rx10">
+          <span class="drawer-label">전라</span>
+          <span class="drawer-sub">내소사 · 무위사 · 송광사 · 금산사</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div>
+        <label class="drawer" for="rx11">
+          <span class="drawer-label">경상</span>
+          <span class="drawer-sub">봉정사 · 해인사 · 보리암 · 분황사</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div>
+        <label class="drawer" for="rx12">
+          <span class="drawer-label">제주</span>
+          <span class="drawer-sub">산방굴사 · 관음사</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+
+      <div class="rail"><span>재미난 이야기 주머니</span></div>
+
+      <div>
+        <label class="drawer" for="rx13">
+          <span class="drawer-label">방귀쟁이 며느리</span>
+          <span class="drawer-sub">쫓겨났다가 배를 따 오다</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div>
+        <label class="drawer" for="rx14">
+          <span class="drawer-label">떡보와 사신</span>
+          <span class="drawer-sub">손짓 문답으로 이긴 떡장수</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div>
+        <label class="drawer" for="rx15">
+          <span class="drawer-label">내 복에 산다</span>
+          <span class="drawer-sub">쫓겨난 셋째 딸</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div>
+        <label class="drawer" for="rx16">
+          <span class="drawer-label">새끼 서 발</span>
+          <span class="drawer-sub">새끼줄로 부자가 되다</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div>
+        <label class="drawer" for="rx17">
+          <span class="drawer-label">복 타러 간 총각</span>
+          <span class="drawer-sub">남의 부탁을 안고 떠난 길</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+      <div>
+        <label class="drawer" for="rx18">
+          <span class="drawer-label">봉이 김선달</span>
+          <span class="drawer-sub">닭 한 마리, 강물 한 줄기</span>
+          <span class="handle" aria-hidden="true"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="counter">
+      <p class="empty">아직 지어 드린 이야기가 없습니다.<br>위의 서랍 중 하나를 골라 주세요.</p>
+
+      <article class="slip" id="slip1">
+        <div class="slip-head">
+          <h2>달 삶은 물</h2>
+          <span class="slip-for">잠이 오지 않을 때</span>
+        </div>
+        <p>옛날 어느 마을에 밤마다 잠을 못 이루는 아이가 있었습니다. 할머니는 아이를 마당으로 데리고 나가, 물 한 대접을 떠다 놓고 그 안에 뜬 달을 가리켰습니다. “이건 달을 삶은 물이란다. 한 모금 마시면 달이 네 안에서 천천히 진다.” 아이는 물을 마시고 자리에 누웠습니다. 정말로 눈꺼풀 위로 달이 조금씩 기울었고, 아이는 자기가 언제 잠들었는지도 모른 채 아침을 맞았습니다.</p>
+        <div class="dose"><b>복용법</b> · 불을 끄고 누운 뒤, 마음속으로 한 모금씩. 하루 한 번이면 충분합니다.</div>
+      </article>
+
+      <article class="slip" id="slip2">
+        <div class="slip-head">
+          <h2>고요 한 줌</h2>
+          <span class="slip-for">마음이 시끄러울 때</span>
+        </div>
+        <p>약방 뒤뜰에는 아주 오래된 항아리가 하나 있습니다. 안에 든 것은 아무것도 없습니다. 사람들이 뚜껑을 열고 그 안에 대고 하고 싶은 말을 실컷 쏟아 붓고 나면, 항아리는 그 말을 다 삼킨 뒤 아무 대답도 하지 않습니다. 이상하게도 그 침묵을 듣고 나면 다들 한결 가벼운 얼굴로 돌아갑니다. 항아리가 하는 일은 그저 끝까지 들어 주는 것뿐입니다.</p>
+        <div class="dose"><b>복용법</b> · 아무도 없는 곳에서, 하고 싶은 말을 소리 내어 한 번. 답을 기다리지 마세요.</div>
+      </article>
+
+      <article class="slip" id="slip3">
+        <div class="slip-head">
+          <h2>첫걸음 가루</h2>
+          <span class="slip-for">겁이 날 때</span>
+        </div>
+        <p>다리를 건너지 못하는 사람이 있었습니다. 아래를 보면 강이 너무 깊어 보였습니다. 뱃사공이 말했습니다. “강을 건너려 하지 말고, 널빤지 한 장만 건너 보시오.” 그 사람은 널빤지 하나를 건넜습니다. 그리고 그 다음 것도. 그렇게 예순여덟 장을 건너고 나니 이미 반대편이었습니다. 강을 건넌 사람은 아무도 없었습니다. 널빤지를 건넌 사람만 있었을 뿐입니다.</p>
+        <div class="dose"><b>복용법</b> · 오늘 할 수 있는 가장 작은 것 한 가지만 정해서. 그 다음은 내일 정하세요.</div>
+      </article>
+
+      <article class="slip" id="slip4">
+        <div class="slip-head">
+          <h2>편지 세 통</h2>
+          <span class="slip-for">누군가 그리울 때</span>
+        </div>
+        <p>약방에는 부치지 못한 편지만 모아 둔 서랍이 있습니다. 받을 사람이 너무 멀리 있거나, 이미 이 세상에 없는 편지들입니다. 약방 주인은 그 편지들을 버리지 않고 계절마다 꺼내어 볕에 말립니다. “부치지 못했어도 쓴 마음은 어디 가지 않으니까요.” 종이가 마르는 동안, 뜰에는 오래전 목소리 같은 바람이 한 번 지나갑니다.</p>
+        <div class="dose"><b>복용법</b> · 부치지 않아도 좋으니 한 통 쓰세요. 다 쓰면 접어서 서랍에 넣어 두면 됩니다.</div>
+      </article>
+
+      <article class="slip" id="slip5">
+        <div class="slip-head">
+          <h2>웃음 씨앗</h2>
+          <span class="slip-for">웃고 싶을 때</span>
+        </div>
+        <p>한 노인이 씨앗을 사러 왔습니다. “웃음이 열리는 나무를 심고 싶소.” 약방 주인은 아무것도 들지 않은 봉지를 건넸습니다. 노인이 텅 빈 봉지를 들여다보다가 어이없어 픽 웃자, 주인이 말했습니다. “보십시오, 벌써 싹이 텄습니다.” 노인은 그 길로 마을까지 걸어가며 만나는 사람마다 이 이야기를 했고, 마을에는 그해 웃음이 아주 많이 열렸습니다.</p>
+        <div class="dose"><b>복용법</b> · 오늘 만난 사람에게 이 이야기를 그대로 한 번 옮겨 주세요.</div>
+      </article>
+
+      <article class="slip" id="slip6">
+        <div class="slip-head">
+          <h2>새싹 한 뿌리</h2>
+          <span class="slip-for">다시 시작할 때</span>
+        </div>
+        <p>산불이 지나간 자리에 사람들이 모여 안타까워하고 있을 때, 한 아이가 까맣게 탄 땅을 파헤치더니 소리쳤습니다. “여기 아직 뿌리가 있어요!” 어른들은 그제야 알았습니다. 불은 위에 있던 것만 태웠고, 땅속에 있던 것은 하나도 건드리지 못했다는 것을. 이듬해 봄, 그 산은 아무 일 없었다는 듯 초록이 되었습니다.</p>
+        <div class="dose"><b>복용법</b> · 잃은 것을 세지 말고, 남아 있는 것을 하나씩 세어 보세요.</div>
+      </article>
+
+      <article class="slip" id="slip7">
+        <div class="slip-head">
+          <h2>서울·경기·인천</h2>
+          <span class="slip-for">옛 절 이야기</span>
+        </div>
+        <p><span class="tale-name">강화 전등사</span> — 대웅전을 짓던 도편수가 아랫마을 주막 여인과 정을 나눴는데, 여인이 공사비를 갖고 달아났습니다. 도편수는 처마 네 귀퉁이에 벌거벗은 여인이 지붕을 떠받친 모습을 새겨 넣어, 두고두고 무거운 지붕을 이고 부처님 법문을 듣게 했다고 전합니다.</p>
+        <p><span class="tale-name">양평 용문사</span> — 천 년 넘은 은행나무는 의상대사가 짚던 지팡이를 꽂은 것이 자랐다고도 하고, 신라가 망한 뒤 금강산으로 가던 마의태자가 심었다고도 합니다. 나라에 큰일이 생기면 이 나무가 소리를 낸다는 말이 함께 전해집니다.</p>
+        <p><span class="tale-name">여주 신륵사</span> — 남한강에 사나운 용마가 나타나 사람을 해치자 나옹선사가 굴레(勒)를 씌워 제압했다는 데서 이름이 붙었습니다.</p>
+        <p><span class="tale-name">안성 칠장사</span> — 혜소국사가 산속 일곱 도적을 교화해 모두 현인으로 만들었다 해서 칠장사입니다. 뒷날 임꺽정이 이곳 갖바치 스님을 스승으로 모셨다는 이야기도 덧붙었습니다.</p>
+        <div class="dose"><b>복용법</b> · 가 본 절이 있다면 그 이야기부터 한 편씩.</div>
+      </article>
+
+      <article class="slip" id="slip8">
+        <div class="slip-head">
+          <h2>강원</h2>
+          <span class="slip-for">옛 절 이야기</span>
+        </div>
+        <p><span class="tale-name">정선 정암사</span> — 자장율사가 터를 찾지 못해 헤매는데 한겨울 눈 속에서 칡 세 줄기가 뻗어 나와 그 끝에 절을 세웠습니다. 옛 이름이 갈래사인 까닭입니다.</p>
+        <p><span class="tale-name">속초 신흥사</span> — 앞선 절이 불탄 뒤 스님들의 꿈에 신인(神人)이 나타나 새 터를 일러 주었고, 그 자리에 다시 세웠다 해서 신흥사가 되었습니다.</p>
+        <p class="also">이 밖에 <span class="tale-name">양양 낙산사 홍련암</span>(의상의 관음 친견), <span class="tale-name">인제 오세암</span>(폭설에 남겨진 다섯 살 아이), <span class="tale-name">평창 상원사</span>(세조와 문수동자, 고양이)가 강원의 대표적인 이야기입니다.</p>
+        <div class="dose"><b>복용법</b> · 눈 오는 날 읽으면 더 잘 듣습니다.</div>
+      </article>
+
+      <article class="slip" id="slip9">
+        <div class="slip-head">
+          <h2>충청</h2>
+          <span class="slip-for">옛 절 이야기</span>
+        </div>
+        <p><span class="tale-name">논산 관촉사</span> — 한 여인이 고사리를 꺾다가 아이 우는 소리가 나는 큰 바위를 발견했고, 혜명대사가 그 돌로 미륵불(은진미륵)을 조성했습니다. 완성되자 21일간 빛이 뻗어 중국까지 닿았고, 그 빛을 보고 찾아온 승려가 촛불을 보는 듯하다 하여 관촉사라 이름 지었다고 합니다.</p>
+        <p><span class="tale-name">예산 수덕사</span> — 절을 중창할 돈이 없어 애태우던 차에 아리따운 여인이 나타나 일을 도왔고, 마을 부자가 청혼하자 함께 가던 중 바위틈으로 사라지며 버선 한 짝만 남겼습니다. 그 여인이 관음의 화신이었다는 이야기로, 바위 곁에 버선꽃이 핀다고 합니다.</p>
+        <p><span class="tale-name">보은 법주사</span> — 의신조사가 흰 나귀에 경전을 싣고 돌아와 나귀가 걸음을 멈춘 자리에 절을 세웠습니다. 법이 머문 곳(法住)이라는 이름이 여기서 나왔습니다.</p>
+        <p><span class="tale-name">공주 갑사</span> — 절을 지을 때 어디선가 소가 나타나 나무와 돌을 실어 나르고는 일이 끝나자 쓰러져 죽었고, 그 소를 기려 공우탑(功牛塔)을 세웠다고 전합니다.</p>
+        <div class="dose"><b>복용법</b> · 돌과 나무와 짐승이 주인공인 이야기들입니다. 천천히.</div>
+      </article>
+
+      <article class="slip" id="slip10">
+        <div class="slip-head">
+          <h2>전라</h2>
+          <span class="slip-for">옛 절 이야기</span>
+        </div>
+        <p><span class="tale-name">부안 내소사</span> — 대웅보전을 짓던 목수가 삼 년간 나무만 다듬는데 심부름하던 사미승이 하나를 몰래 감췄고, 목수는 부정을 탔다며 목재 한 개가 모자란 채로 법당을 올렸습니다. 단청 화공은 백일간 안을 들여다보지 말라 했는데 사미승이 참지 못하고 엿보자 새 한 마리가 붓을 물고 날아가, 지금도 한 칸 단청이 비어 있습니다.</p>
+        <p><span class="tale-name">강진 무위사</span> — 극락보전 벽화도 같은 결입니다. 법당 문을 사십구 일간 열지 말라 한 노인의 말을 어기고 주지가 엿보자, 안에 있던 파랑새가 관음보살의 눈동자를 마저 그리지 못하고 날아갔습니다.</p>
+        <p><span class="tale-name">순천 송광사</span> — 보조국사 지눌이 나무로 깎은 오리를 날려 보내 그것이 내려앉은 자리에 절터를 잡았다고 합니다.</p>
+        <p><span class="tale-name">김제 금산사</span> — 미륵불을 세우려는데 그 자리가 깊은 늪이라 메울 수 없자, 진표율사가 숯을 채워 넣게 했습니다. 눈병 앓는 이들이 숯을 가져가 눈을 씻자 나았고, 그렇게 늪이 메워져 미륵전이 섰다는 이야기입니다.</p>
+        <p><span class="tale-name">영암 도갑사</span> — 도선국사 탄생설화가 얽혀 있습니다. 최씨 처녀가 냇물에 떠내려온 오이를 먹고 아이를 배어 숲에 버렸는데, 비둘기들이 날개로 덮어 지켰다 해서 그곳을 구림(鳩林)이라 부릅니다.</p>
+        <p class="also">여기에 <span class="tale-name">구례 화엄사</span>(공주 손바닥의 장륙전), <span class="tale-name">고창 선운사</span>(보은염), <span class="tale-name">해남 미황사</span>(검은 소), <span class="tale-name">장성 백양사</span>(흰 양)가 더해집니다.</p>
+        <div class="dose"><b>복용법</b> · 엿보지 말라는 이야기가 둘입니다. 나란히 읽어 보세요.</div>
+      </article>
+
+      <article class="slip" id="slip11">
+        <div class="slip-head">
+          <h2>경상</h2>
+          <span class="slip-for">옛 절 이야기</span>
+        </div>
+        <p><span class="tale-name">안동 봉정사</span> — 의상대사가 종이로 만든 봉황을 날려 그것이 머문(停) 자리에 세웠다 해서 봉정사입니다.</p>
+        <p><span class="tale-name">합천 해인사</span> — 순응·이정 두 스님이 신라 애장왕비의 병을 고칠 때, 실 한 끝을 왕비에게 매고 다른 끝을 배나무에 묶은 뒤 주문을 외자 나무가 대신 말라 죽고 왕비가 나았습니다. 그 보답으로 왕이 절을 세워 주었다고 합니다.</p>
+        <p><span class="tale-name">남해 보리암</span> — 이성계가 이곳에서 백일기도를 하며 왕이 되면 산 전체를 비단으로 덮겠다고 약속했고, 뒷날 신하의 꾀로 산 이름에 비단 금(錦) 자를 넣어 금산이라 지어 약속을 대신했다는 이야기입니다.</p>
+        <p><span class="tale-name">경주 분황사</span> — 눈먼 아이를 안은 여인이 천수대비 벽화 앞에서 노래를 지어 빌자 아이가 눈을 떴다는 『삼국유사』 기록이 전합니다.</p>
+        <p><span class="tale-name">팔공산 갓바위</span> — 의현대사가 돌아가신 어머니를 위해 조성했다고 하며, 정성껏 빌면 소원 한 가지는 반드시 들어준다는 믿음이 지금까지 이어집니다.</p>
+        <p><span class="tale-name">밀양 표충사</span> — 임진왜란 때 승병을 이끈 사명대사를 모신 곳으로, 대사가 일본에 건너가 불에도 타지 않고 얼음방에서도 살아남았다는 도술담이 널리 퍼졌습니다.</p>
+        <p class="also">경상권에는 <span class="tale-name">양산 통도사</span>(구룡지), <span class="tale-name">영주 부석사</span>(선묘), <span class="tale-name">경주 불국사</span>(무영탑), <span class="tale-name">청도 운문사</span>(이무기 이목), <span class="tale-name">부산 범어사</span>(금빛 물고기), <span class="tale-name">김천 직지사</span>도 함께 있습니다.</p>
+        <div class="dose"><b>복용법</b> · 서랍이 깊습니다. 한 번에 두세 편까지만.</div>
+      </article>
+
+      <article class="slip" id="slip12">
+        <div class="slip-head">
+          <h2>제주</h2>
+          <span class="slip-for">옛 절 이야기</span>
+        </div>
+        <p><span class="tale-name">서귀포 산방굴사</span> — 산방산 여신 산방덕이 인간을 사랑해 내려왔다가 관리의 탐욕에 남편을 잃고, 인간 세상을 한탄하며 바위로 돌아가 굳었습니다. 굴 천장에서 떨어지는 물방울을 그의 눈물이라 부릅니다.</p>
+        <p><span class="tale-name">제주 관음사</span> — 조선의 억불로 절이 모두 사라진 섬에 안봉려관 스님이 관음의 계시를 받고 다시 절을 일으켰다는 근대의 중창담이 전합니다.</p>
+        <div class="dose"><b>복용법</b> · 두 편뿐이지만 섬 하나의 내력입니다.</div>
+      </article>
+
+      <article class="slip" id="slip13">
+        <div class="slip-head">
+          <h2>방귀쟁이 며느리</h2>
+          <span class="slip-for">재미난 이야기</span>
+        </div>
+        <p>시집온 며느리가 얼굴이 노래지도록 참다가 마침내 한 번 크게 뀌었는데, 그 바람에 문짝이 들썩이고 온 집안이 뒤집혔습니다. 시아버지는 부정하다며 며느리를 친정으로 돌려보내려고 길을 나섰습니다. 고갯마루에서 쉬는데 높다란 나무에 배가 탐스럽게 달려 있었습니다. 저걸 어떻게 따느냐고 하자 며느리가 나무를 향해 엉덩이를 들이대고 한 번 뀌었고, 가지가 덜덜 떨리며 배가 후두두 쏟아졌습니다. 배를 맛있게 먹은 시아버지는 그 길로 며느리를 데리고 집으로 돌아갔고, 그 뒤로 며느리의 방귀는 집안을 일으키는 재주가 되었다고 합니다.</p>
+        <div class="dose"><b>복용법</b> · 흠이라고 여기던 것을 다시 들여다보고 싶을 때.</div>
+        <p class="source">한국구비문학대계(한국학중앙연구원)에 여러 각편이 채록된 소담(笑譚) 유형입니다. 위 줄거리는 구비문학 연구자 신동흔의 소개본을 참고해 다시 쓴 것입니다.<br>· <a href="https://kdp.aks.ac.kr/inde/main?itemId=14" target="_blank" rel="noopener">한국구비문학대계</a><br>· <a href="https://lady.khan.co.kr/issue/article/201307151555371" target="_blank" rel="noopener">신동흔, 「옛날 옛적에」 두 번째 이야기(경향)</a></p>
+      </article>
+
+      <article class="slip" id="slip14">
+        <div class="slip-head">
+          <h2>떡보와 사신</h2>
+          <span class="slip-for">재미난 이야기</span>
+        </div>
+        <p>중국 사신이 와서 말 대신 손짓으로 문답을 걸어오는 통에 조정이 쩔쩔맸습니다. 마땅한 사람을 못 찾아 떡만 좋아하는 무식한 떡보를 내보냈는데, 사신이 손짓으로 던지는 물음마다 떡보는 떡 생각으로 엉뚱하게 받아쳤습니다. 그런데 그 엉뚱한 손짓이 공교롭게도 사신의 물음에 딱 맞아떨어져, 사신은 조선에 놀라운 인물이 있다며 감탄하고 물러갔습니다. 아무것도 모른 채 이긴 사람의 이야기입니다.</p>
+        <div class="dose"><b>복용법</b> · 큰 자리에 나가기 전날 밤에 한 번.</div>
+        <p class="source">우연히 얻은 행운을 다룬 우행담(偶幸譚)으로, 한국구비문학대계에 여러 지역의 각편이 실려 있습니다. 조희웅의 『한국설화의 유형적 연구』에서 비교 연구된 대표 유형이기도 합니다.<br>· <a href="https://kdp.aks.ac.kr/inde/main?itemId=14" target="_blank" rel="noopener">한국구비문학대계</a></p>
+      </article>
+
+      <article class="slip" id="slip15">
+        <div class="slip-head">
+          <h2>내 복에 산다</h2>
+          <span class="slip-for">재미난 이야기</span>
+        </div>
+        <p>아버지가 세 딸을 불러 누구 덕에 사느냐고 물었습니다. 위의 두 딸은 아버지 덕이라 했지만 셋째 딸은 제 복에 산다고 답했고, 그 말에 노한 아버지는 딸을 내쫓았습니다. 집을 나온 셋째는 산속에서 숯 굽는 총각을 만나 혼인했는데, 숯가마 자리에서 금이 나와 큰 부자가 되었습니다. 뒷날 가세가 기울어 걸인이 된 아버지가 그 집에 이르렀고, 딸은 아버지를 알아보고 맞아들여 잘 모셨습니다.</p>
+        <div class="dose"><b>복용법</b> · 제 몫으로 살아 보고 싶은 날에.</div>
+        <p class="source">전국에서 널리 채록되는 민담 유형으로, 제주 무가 삼공본풀이·『삼국유사』 무왕설화와 화소를 공유합니다.<br>· <a href="https://kdp.aks.ac.kr/inde/main?itemId=14" target="_blank" rel="noopener">한국구비문학대계</a><br>· <a href="https://koreascience.or.kr/article/JAKO201014372076266.pdf" target="_blank" rel="noopener">박영선, 「민담 〈내 복에 산다〉의 분석심리학적 해석」, 『심성연구』 25(2)</a></p>
+      </article>
+
+      <article class="slip" id="slip16">
+        <div class="slip-head">
+          <h2>새끼 서 발</h2>
+          <span class="slip-for">재미난 이야기</span>
+        </div>
+        <p>게을러 빠진 아들이 사흘 걸려 꼰 것이 새끼 서 발뿐이라, 아버지는 그것만 들려 아들을 내보냈습니다. 아들은 길에서 새끼줄을 옹기와 바꾸고, 깨진 옹기값으로 죽은 말을 받고, 죽은 말을 비단과 바꾸고, 그 비단으로 마침내 색시를 얻어 잘살게 되었습니다. 손에 쥔 것이라고는 새끼 서 발밖에 없던 사람이 한 번씩 바꿔 가며 여기까지 온 이야기입니다.</p>
+        <div class="dose"><b>복용법</b> · 가진 것이 너무 적어 보일 때 한 번.</div>
+        <p class="source">물건을 차례로 바꿔 가며 복을 얻는 행운담 유형으로, 한국구비문학대계에 각 지역 각편이 채록되어 있습니다.<br>· <a href="https://kdp.aks.ac.kr/inde/main?itemId=14" target="_blank" rel="noopener">한국구비문학대계</a></p>
+      </article>
+
+      <article class="slip" id="slip17">
+        <div class="slip-head">
+          <h2>복 타러 간 총각</h2>
+          <span class="slip-for">재미난 이야기</span>
+        </div>
+        <p>가난한 총각이 어째서 제게는 복이 없는지 따져 물으려고 서천서역국 길을 떠났습니다. 가는 길에 만난 이들이 저마다 물어봐 달라고 부탁을 얹었습니다. 말 못 하는 처녀, 꽃이 피지 않는 나무, 하늘로 오르지 못하는 이무기였습니다. 총각이 받아 온 답은 이러했습니다. 처녀는 짝을 만나면 말문이 트이고, 나무는 뿌리 밑에 묻힌 것을 꺼내면 피어나고, 이무기는 지나치게 물고 있는 여의주를 하나 놓으면 오른다는 것이었습니다. 돌아오는 길에 답을 전할 때마다 총각에게는 아내와 재물과 은혜가 차례로 돌아왔습니다. 제 복을 물으러 갔다가 남의 부탁을 들어주며 복을 얻은 셈입니다.</p>
+        <div class="dose"><b>복용법</b> · 남의 일을 대신 맡게 된 날 저녁에.</div>
+        <p class="source">구복여행(求福旅行) 유형으로, 한국구비문학대계를 비롯한 전국 자료에 널리 채록되어 있습니다. 지역에 따라 부탁하는 이와 답의 내용이 조금씩 다릅니다.<br>· <a href="https://kdp.aks.ac.kr/inde/main?itemId=14" target="_blank" rel="noopener">한국구비문학대계</a></p>
+      </article>
+
+      <article class="slip" id="slip18">
+        <div class="slip-head">
+          <h2>봉이 김선달</h2>
+          <span class="slip-for">재미난 이야기</span>
+        </div>
+        <p>김선달이 장에서 닭을 한 마리 고르며 이게 봉이냐고 짐짓 물었더니, 장사꾼이 값을 더 받으려고 봉이 맞다고 우겼습니다. 김선달은 값을 후하게 치르고 그 닭을 관가에 봉이라며 바쳤다가 매를 맞고는, 봉이라 속아 산 값을 장사꾼에게서 되받아 냈습니다. 그때부터 봉이 김선달이라 불렸다고 합니다. 뒷날 대동강 물을 제 것인 양 팔아넘긴 이야기까지 더해져, 꾀로 욕심 많은 사람을 골리는 인물담이 한 묶음으로 전합니다.</p>
+        <div class="dose"><b>복용법</b> · 억울한 일을 당한 날, 웃으려고.</div>
+        <p class="source">평양을 무대로 한 대표적 인물 사기담으로, 한국구비문학대계에 여러 각편이 채록되어 있습니다.<br>· <a href="https://kdp.aks.ac.kr/inde/main?itemId=14" target="_blank" rel="noopener">한국구비문학대계</a></p>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <p>이야기 약방 · 지은이 그루</p>
+    <p>문 여는 시간 — 이야기가 필요한 모든 밤</p>
+    <p class="credit">'재미난 이야기 주머니'의 여섯 편은 <a href="https://kdp.aks.ac.kr/inde/main?itemId=14" target="_blank" rel="noopener">한국구비문학대계</a>(한국학중앙연구원)에 채록된 설화 유형을 바탕으로 다시 쓴 글입니다. 채록 원문이 아니며, 지역과 구연자에 따라 내용이 다를 수 있습니다.</p>
+  </footer>
+
+</div>
+
+<script>
+  // 열려 있는 서랍을 다시 누르면 닫습니다.
+  document.querySelectorAll('.pharmacy .drawer').forEach(function (label) {
+    var input = document.getElementById(label.htmlFor);
+    if (!input) return;
+
+    label.addEventListener('click', function (e) {
+      if (input.checked) {
+        e.preventDefault();
+        input.checked = false;
+      }
+    });
+
+    input.addEventListener('keydown', function (e) {
+      if ((e.key === 'Enter' || e.key === ' ') && input.checked) {
+        e.preventDefault();
+        input.checked = false;
+      }
+    });
+  });
+</script>
+</body>
+</html>
