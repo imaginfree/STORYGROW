@@ -205,20 +205,76 @@
     box-shadow: 0 1px 1px rgba(0,0,0,.35);
   }
 
-  /* ── 처방전 — 누른 서랍 바로 아래에서 열립니다 ─── */
-  .slip {
-    display: block;
-    grid-column: 1 / -1;
-    margin: 2px 0 4px;
+  /* ── 처방전 — 화면 전체에 펼쳐집니다 ───────────── */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    background: rgba(18,12,8,.82);
+    cursor: pointer;
+    animation: veil .18s ease both;
+  }
+
+  .overlay[hidden] { display: none; }
+
+  .sheet {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(42rem, 100%);
+    max-height: min(86vh, 100%);
     background: var(--paper);
     color: var(--ink);
     border-radius: 3px;
-    padding: 2rem 1.75rem 2.25rem;
     border-top: 6px double var(--indigo);
-    box-shadow: 0 20px 40px -22px rgba(0,0,0,.85);
+    box-shadow: 0 30px 60px -18px rgba(0,0,0,.9);
+    animation: rise .24s ease both;
   }
 
-  .slip[hidden] { display: none; }
+  .sheet-body { overflow-y: auto; }
+
+  .sheet-close {
+    position: absolute;
+    top: .5rem;
+    right: .625rem;
+    z-index: 2;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 99px;
+    background: rgba(43,39,33,.07);
+    color: var(--ink-soft);
+    font: inherit;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .sheet-close:hover { background: rgba(43,39,33,.14); color: var(--ink); }
+
+  .sheet-close:focus-visible {
+    outline: 3px solid var(--indigo);
+    outline-offset: 2px;
+  }
+
+  .sheet-hint {
+    flex: none;
+    padding: .625rem 1rem .75rem;
+    border-top: 1px dashed rgba(43,39,33,.22);
+    text-align: center;
+    font-size: .8125rem;
+    color: var(--ink-soft);
+  }
+
+  .slip { display: block; padding: 2rem 1.75rem 2.25rem; }
+
+  @keyframes veil { from { opacity: 0; } }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
 
   .slip-head {
     display: flex;
@@ -322,7 +378,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    * { transition: none !important; }
+    * { transition: none !important; animation: none !important; }
     html { scroll-behavior: auto; }
   }
 </style>
@@ -337,12 +393,20 @@
   </header>
 
   <main class="pharmacy">
-    <p class="guide">서랍을 눌러 열고, 다시 누르면 닫힙니다</p>
+    <p class="guide">서랍을 누르면 이야기가 화면 가득 펼쳐집니다</p>
     <div class="chest" id="chest"></div>
     <noscript>
       <p class="no-script">이 약방은 서랍을 여닫는 데 자바스크립트를 씁니다.<br>브라우저에서 자바스크립트를 켜 주세요.</p>
     </noscript>
   </main>
+
+  <div class="overlay" id="overlay" hidden>
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true">
+      <button class="sheet-close" id="sheetClose" type="button" aria-label="닫기">×</button>
+      <div class="sheet-body" id="sheetBody"></div>
+      <p class="sheet-hint">아무 데나 누르면 서랍이 닫힙니다</p>
+    </div>
+  </div>
 
   <footer>
     <p>이야기 약방 · 지은이 그루</p>
@@ -378,7 +442,6 @@
     var slip = document.createElement('article');
     slip.className = 'slip';
     slip.id = id;
-    slip.hidden = true;
 
     var head = document.createElement('div');
     head.className = 'slip-head';
@@ -481,58 +544,73 @@
       cell.appendChild(button);
       chest.appendChild(cell);
 
-      var slip = buildSlip(drawer, slipId);
-      slip.setAttribute('role', 'region');
-      slip.setAttribute('aria-labelledby', buttonId);
-
       var index = items.length;
-      items.push({ cell: cell, button: button, slip: slip });
+      items.push({
+        button: button,
+        slip: buildSlip(drawer, slipId),
+        title: drawer.title || drawer.label
+      });
       button.addEventListener('click', function () { toggle(index); });
     });
   });
 
+  var overlay = document.getElementById('overlay');
+  var sheet = document.getElementById('sheet');
+  var sheetBody = document.getElementById('sheetBody');
+  var sheetClose = document.getElementById('sheetClose');
   var openIndex = -1;
-
-  // 누른 서랍이 속한 가로 줄의 맨 끝에 처방전을 끼워 넣습니다.
-  // 화면 너비에 따라 한 줄의 칸 수가 달라지므로 그때마다 다시 계산합니다.
-  function placeSlip(item) {
-    item.slip.remove();
-    var top = item.cell.offsetTop;
-    var lastInRow = item.cell;
-    Array.prototype.forEach.call(chest.children, function (node) {
-      if (node.className === 'cell' && node.offsetTop === top) lastInRow = node;
-    });
-    lastInRow.insertAdjacentElement('afterend', item.slip);
-  }
 
   function close() {
     if (openIndex < 0) return;
-    var item = items[openIndex];
-    item.slip.hidden = true;
-    item.slip.remove();
-    item.button.classList.remove('is-open');
-    item.button.setAttribute('aria-expanded', 'false');
+    var button = items[openIndex].button;
     openIndex = -1;
+
+    overlay.hidden = true;
+    sheetBody.innerHTML = '';
+    button.classList.remove('is-open');
+    button.setAttribute('aria-expanded', 'false');
+
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    button.focus();
   }
 
-  function toggle(index) {
-    if (openIndex === index) { close(); return; }
+  function open(index) {
     close();
     var item = items[index];
-    placeSlip(item);
-    item.slip.hidden = false;
+
+    sheetBody.appendChild(item.slip);
+    sheet.setAttribute('aria-label', item.title);
+    overlay.hidden = false;
+    sheetBody.scrollTop = 0;
+
     item.button.classList.add('is-open');
     item.button.setAttribute('aria-expanded', 'true');
     openIndex = index;
 
-    // 화면 아래로 밀려났을 때만 살짝 끌어올립니다.
-    if (item.slip.getBoundingClientRect().top > window.innerHeight - 60) {
-      item.slip.scrollIntoView({ block: 'center' });
-    }
+    // 뒤쪽 약장이 따라 움직이지 않도록 잠가 둡니다.
+    var barWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = 'hidden';
+    if (barWidth > 0) document.body.style.paddingRight = barWidth + 'px';
+
+    sheetClose.focus();
   }
 
-  window.addEventListener('resize', function () {
-    if (openIndex >= 0) placeSlip(items[openIndex]);
+  function toggle(index) {
+    if (openIndex === index) close();
+    else open(index);
+  }
+
+  // 펼쳐진 화면은 아무 데나 눌러도 닫힙니다.
+  // 다만 출처 링크를 누르거나 글을 끌어 선택하는 중에는 그대로 둡니다.
+  overlay.addEventListener('click', function (event) {
+    if (event.target.closest('a')) return;
+    if (String(window.getSelection())) return;
+    close();
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') close();
   });
 })();
 </script>
