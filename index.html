@@ -338,6 +338,49 @@
   .source a { color: var(--indigo); text-decoration-thickness: 1px; }
   .source a:hover { color: var(--cinnabar); }
 
+  /* ── 이야기 지도 ───────────────────────────── */
+  .atlas { margin-top: 3.5rem; }
+
+  .atlas-title {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-align: center;
+    margin: 0 0 .5rem;
+    color: var(--paper);
+  }
+
+  .map-frame {
+    margin: 1.5rem 0 0;
+    padding: 12px;
+    background: rgba(0,0,0,.22);
+    border: 1px solid rgba(169,131,75,.28);
+    border-radius: 4px;
+  }
+
+  .map-frame.korea { max-width: 23rem; margin-left: auto; margin-right: auto; }
+
+  .map-frame svg { display: block; width: 100%; height: auto; }
+
+  .map-land { fill: var(--paper-deep); stroke: var(--brass); stroke-width: .8; stroke-linejoin: round; }
+  .map-land.dim { fill: #8d8272; }
+
+  .pin { cursor: pointer; }
+  .pin-halo { fill: rgba(168,58,44,.22); transition: opacity .18s ease; }
+  .pin-dot { fill: var(--cinnabar); stroke: var(--paper); stroke-width: 1.2; }
+  .pin:hover .pin-halo, .pin:focus-visible .pin-halo { fill: rgba(168,58,44,.45); }
+  .pin:focus-visible { outline: none; }
+  .pin:focus-visible .pin-dot { stroke: var(--indigo); stroke-width: 2.5; }
+
+  .map-caption {
+    margin: .75rem 0 0;
+    text-align: center;
+    font-size: .8125rem;
+    line-height: 1.7;
+    color: #a9997f;
+  }
+
   .no-script {
     text-align: center;
     font-family: var(--serif);
@@ -398,6 +441,23 @@
     <noscript>
       <p class="no-script">이 약방은 서랍을 여닫는 데 자바스크립트를 씁니다.<br>브라우저에서 자바스크립트를 켜 주세요.</p>
     </noscript>
+
+    <section class="atlas" id="atlas" hidden>
+      <h2 class="atlas-title">이야기가 온 곳</h2>
+      <p class="guide">붉은 점을 누르면 그 이야기가 펼쳐집니다. 이야기를 누르면 지도로 돌아옵니다.</p>
+
+      <figure class="map-frame world">
+        <svg id="mapWorld" role="img" aria-label="세계 설화가 전해 오는 곳을 표시한 세계 지도"></svg>
+        <figcaption class="map-caption">세계 설화 주머니와 ‘같은 이야기, 다른 나라’에 담긴 이야기들이 전해 오는 곳입니다.</figcaption>
+      </figure>
+
+      <figure class="map-frame korea">
+        <svg id="mapKorea" role="img" aria-label="옛 절 이야기에 나오는 절의 자리를 표시한 한반도 지도"></svg>
+        <figcaption class="map-caption">‘옛 절 이야기’에 나오는 절들입니다. 옅은 쪽은 북녘으로, 봉이 김선달의 대동강이 그곳에 있습니다.</figcaption>
+      </figure>
+
+      <p class="map-caption">‘마음 처방’ 여섯 편은 지어낸 이야기라 지도에 자리가 없고, ‘재미난 이야기’는 대부분 어느 한 곳이 아니라 전국에 두루 전하는 것이라 점을 찍지 않았습니다. 위도와 경도는 어림한 값으로, 정확한 측량이 아니라 어느 언저리인지 보여 주기 위한 표시입니다.</p>
+    </section>
   </main>
 
   <div class="overlay" id="overlay" hidden>
@@ -412,12 +472,14 @@
     <p>이야기 약방 · 지은이 그루</p>
     <p>문 여는 시간 — 이야기가 필요한 모든 밤</p>
     <p class="credit">'재미난 이야기 주머니'의 여섯 편은 <a href="https://kdp.aks.ac.kr/inde/main?itemId=14" target="_blank" rel="noopener">한국구비문학대계</a>(한국학중앙연구원)에 채록된 설화 유형을 바탕으로 다시 쓴 글입니다. '세계 설화 주머니'와 '같은 이야기, 다른 나라'의 열두 편은 <a href="https://sites.pitt.edu/~dash/folktexts.html" target="_blank" rel="noopener">D. L. Ashliman의 설화 전자도서관</a>(피츠버그대), <a href="https://www.gutenberg.org/" target="_blank" rel="noopener">Project Gutenberg</a>, <a href="https://sacred-texts.com/" target="_blank" rel="noopener">Internet Sacred Text Archive</a>, <a href="https://ctext.org/" target="_blank" rel="noopener">Chinese Text Project</a>에 공개된 채록본과 고전 원문을 참고했습니다. 서랍마다 해당 출처를 함께 적어 두었습니다.</p>
+    <p class="credit">'이야기가 온 곳'의 두 지도는 <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a>(퍼블릭 도메인)의 지리 자료를 밑그림으로 삼아 그렸습니다.</p>
     <p class="credit">모두 채록 원문이 아니라 줄거리를 간추려 다시 쓴 글입니다. 같은 이야기라도 지역과 구연자에 따라 내용과 결말이 다를 수 있습니다. 원주민 전승 가운데에는 공동체 안에서만 전하도록 지켜지는 이야기가 있어, 공개된 채록집에 실린 편만 실었습니다.</p>
   </footer>
 
 </div>
 
 <script src="stories.js"></script>
+<script src="maps.js"></script>
 <script>
 (function () {
   var chest = document.getElementById('chest');
@@ -548,7 +610,8 @@
       items.push({
         button: button,
         slip: buildSlip(drawer, slipId),
-        title: drawer.title || drawer.label
+        title: drawer.title || drawer.label,
+        label: drawer.label
       });
       button.addEventListener('click', function () { toggle(index); });
     });
@@ -559,11 +622,14 @@
   var sheetBody = document.getElementById('sheetBody');
   var sheetClose = document.getElementById('sheetClose');
   var openIndex = -1;
+  var opener = null;   // 서랍에서 열었는지, 지도의 점에서 열었는지
 
   function close() {
     if (openIndex < 0) return;
     var button = items[openIndex].button;
+    var back = opener || button;
     openIndex = -1;
+    opener = null;
 
     overlay.hidden = true;
     sheetBody.innerHTML = '';
@@ -572,11 +638,15 @@
 
     document.body.style.overflow = '';
     document.body.style.paddingRight = '';
-    button.focus();
+
+    // 보던 자리를 그대로 두고 초점만 돌려줍니다.
+    // 지도에서 열었다면 지도로, 서랍에서 열었다면 그 서랍으로 돌아갑니다.
+    back.focus({ preventScroll: true });
   }
 
-  function open(index) {
+  function open(index, from) {
     close();
+    opener = from || null;
     var item = items[index];
 
     sheetBody.appendChild(item.slip);
@@ -612,6 +682,74 @@
   document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') close();
   });
+
+  // ── 이야기 지도 ────────────────────────────────────────────
+  // maps.js 의 밑그림 위에, stories.js 의 PLACES 를 점으로 찍습니다.
+  // 점을 누르면 서랍을 누른 것과 똑같이 이야기가 펼쳐집니다.
+  (function drawAtlas() {
+    if (!window.MAPS || !window.PLACES) return;
+
+    var byLabel = {};
+    items.forEach(function (item, i) { byLabel[item.label] = i; });
+
+    var SVG = 'http://www.w3.org/2000/svg';
+
+    function el(name, attrs) {
+      var node = document.createElementNS(SVG, name);
+      Object.keys(attrs).forEach(function (k) { node.setAttribute(k, attrs[k]); });
+      return node;
+    }
+
+    function addLand(svg, d, dim) {
+      if (!d) return;
+      svg.appendChild(el('path', { d: d, class: dim ? 'map-land dim' : 'map-land' }));
+    }
+
+    function addPins(svg, map, which, dotR) {
+      Object.keys(window.PLACES).forEach(function (label) {
+        var index = byLabel[label];
+        if (index === undefined) return;
+
+        window.PLACES[label].forEach(function (place) {
+          var on = place.on || 'world';
+          if (on !== which) return;
+
+          var xy = map.project(place.lon, place.lat);
+          var pin = el('g', { class: 'pin', tabindex: '0', role: 'button' });
+
+          var title = document.createElementNS(SVG, 'title');
+          title.textContent = place.name + ' · ' + label;
+          pin.appendChild(title);
+
+          pin.appendChild(el('circle', { class: 'pin-halo', cx: xy[0], cy: xy[1], r: dotR * 2.4 }));
+          pin.appendChild(el('circle', { class: 'pin-dot', cx: xy[0], cy: xy[1], r: dotR }));
+
+          pin.addEventListener('click', function () { open(index, pin); });
+          pin.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              open(index, pin);
+            }
+          });
+
+          svg.appendChild(pin);
+        });
+      });
+    }
+
+    var world = document.getElementById('mapWorld');
+    world.setAttribute('viewBox', MAPS.world.viewBox);
+    addLand(world, MAPS.world.land, false);
+    addPins(world, MAPS.world, 'world', 11);
+
+    var korea = document.getElementById('mapKorea');
+    korea.setAttribute('viewBox', MAPS.korea.viewBox);
+    addLand(korea, MAPS.korea.north, true);
+    addLand(korea, MAPS.korea.south, false);
+    addPins(korea, MAPS.korea, 'korea', 8);
+
+    document.getElementById('atlas').hidden = false;
+  })();
 })();
 </script>
 </body>
